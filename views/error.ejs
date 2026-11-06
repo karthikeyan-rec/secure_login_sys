@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon auth-icon--error">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <h1><%= status %> Error</h1>
+      <p><%= message %></p>
+    </div>
+    <a href="/" class="btn btn-primary btn-full">Go Home</a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

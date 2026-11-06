@@ -1,0 +1,60 @@
+<%- include('partials/header') %>
+
+<div class="auth-container">
+  <div class="auth-card auth-card--wide">
+    <div class="auth-header">
+      <div class="auth-icon auth-icon--2fa">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <h1>Set Up 2FA</h1>
+      <p>Scan the QR code with Google Authenticator or Authy, then enter the 6-digit code to confirm.</p>
+    </div>
+
+    <% if (errors && errors.length > 0) { %>
+      <div class="alert alert-error">
+        <ul class="error-list">
+          <% errors.forEach(function(e) { %>
+            <li><%= e.msg %></li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } %>
+
+    <div class="qr-section">
+      <img src="<%= qrDataUrl %>" alt="2FA QR Code" class="qr-code" />
+      <div class="qr-manual">
+        <p>Can't scan? Enter this key manually in your app:</p>
+        <code class="secret-key"><%= secret %></code>
+      </div>
+    </div>
+
+    <form method="POST" action="/auth/2fa/setup" class="auth-form" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+      <div class="form-group">
+        <label for="token">Verification Code</label>
+        <input
+          type="text"
+          id="token"
+          name="token"
+          inputmode="numeric"
+          pattern="[0-9]{6}"
+          maxlength="6"
+          placeholder="Enter 6-digit code"
+          autocomplete="one-time-code"
+          required
+          autofocus
+          class="otp-input"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">Enable 2FA</button>
+    </form>
+
+    <p class="auth-footer"><a href="/dashboard">← Cancel</a></p>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

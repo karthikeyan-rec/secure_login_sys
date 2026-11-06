@@ -1,0 +1,80 @@
+<%- include('partials/header') %>
+
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <h1>Welcome Back</h1>
+      <p>Log in to your account</p>
+    </div>
+
+    <% if (flashError) { %>
+      <div class="alert alert-error"><%= flashError %></div>
+    <% } %>
+    <% if (flashSuccess) { %>
+      <div class="alert alert-success"><%= flashSuccess %></div>
+    <% } %>
+    <% if (flashInfo) { %>
+      <div class="alert alert-info"><%= flashInfo %></div>
+    <% } %>
+    <% if (errors && errors.length > 0) { %>
+      <div class="alert alert-error">
+        <ul class="error-list">
+          <% errors.forEach(function(e) { %>
+            <li><%= e.msg %></li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/login" class="auth-form" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value="<%= old.username || '' %>"
+          placeholder="Your username"
+          autocomplete="username"
+          required
+          autofocus
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Your password"
+            autocomplete="current-password"
+            required
+          />
+          <button type="button" class="toggle-password" aria-label="Toggle password" onclick="togglePwd('password')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">Log In</button>
+    </form>
+
+    <p class="auth-footer">Don't have an account? <a href="/register">Register</a></p>
+  </div>
+</div>
+
+<script src="/js/auth.js"></script>
+<%- include('partials/footer') %>

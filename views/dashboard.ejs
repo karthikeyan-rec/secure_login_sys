@@ -1,0 +1,149 @@
+<%- include('partials/header') %>
+
+<div class="dashboard">
+  <div class="dashboard-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="subtitle">Welcome back, <strong><%= user.username %></strong>!</p>
+    </div>
+    <form method="POST" action="/logout">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button type="submit" class="btn btn-outline">Log Out</button>
+    </form>
+  </div>
+
+  <% if (flashError) { %>
+    <div class="alert alert-error"><%= flashError %></div>
+  <% } %>
+  <% if (flashSuccess) { %>
+    <div class="alert alert-success"><%= flashSuccess %></div>
+  <% } %>
+  <% if (flashInfo) { %>
+    <div class="alert alert-info"><%= flashInfo %></div>
+  <% } %>
+
+  <!-- Account Overview -->
+  <div class="card-grid">
+
+    <!-- Account Info -->
+    <div class="card">
+      <div class="card-icon card-icon--user">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <h3>Account Info</h3>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-label">Username</span>
+            <span class="info-value"><%= user.username %></span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value email-value" title="<%= user.email %>"><%= user.email %></span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Member Since</span>
+            <span class="info-value"><%= memberSince %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2FA Status -->
+    <div class="card">
+      <div class="card-icon <%= user.totp_enabled ? 'card-icon--success' : 'card-icon--warn' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <h3>Two-Factor Authentication</h3>
+        <% if (user.totp_enabled) { %>
+          <p class="status status--on">✅ 2FA is <strong>enabled</strong></p>
+          <form method="POST" action="/auth/2fa/disable">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button type="submit" class="btn btn-sm btn-danger"
+              onclick="return confirm('Disable 2FA? Your account will be less secure.')">
+              Disable 2FA
+            </button>
+          </form>
+        <% } else { %>
+          <p class="status status--off">⚠️ 2FA is <strong>not enabled</strong></p>
+          <a href="/auth/2fa/setup" class="btn btn-sm btn-primary">Enable 2FA</a>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Security Status -->
+    <div class="card">
+      <div class="card-icon card-icon--info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <h3>Security Status</h3>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-label">Password</span>
+            <span class="info-value"><span class="badge badge--success">bcrypt hashed</span></span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Sessions</span>
+            <span class="info-value"><span class="badge badge--success">Server-side</span></span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">CSRF</span>
+            <span class="info-value"><span class="badge badge--success">Protected</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /card-grid -->
+
+  <!-- Activity Log -->
+  <div class="card card--full">
+    <h2>Recent Activity</h2>
+    <% if (audits.length === 0) { %>
+      <p class="muted">No activity recorded yet.</p>
+    <% } else { %>
+      <div class="table-wrapper">
+        <table class="audit-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Time</th>
+              <th>IP Address</th>
+              <th>Browser / Client</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% audits.forEach(function(a) { %>
+              <tr>
+                <td>
+                  <span class="event-badge event-<%= a.event.toLowerCase().replace(/_/g,'-') %>">
+                    <%= a.event.replace(/_/g, ' ') %>
+                  </span>
+                </td>
+                <td><%= a.ts %></td>
+                <td><code><%= a.ip_address || '—' %></code></td>
+                <td class="ua-cell">
+                  <%= (a.user_agent || '—').substring(0, 60) %><%= (a.user_agent || '').length > 60 ? '…' : '' %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+
+</div><!-- /dashboard -->
+
+<%- include('partials/footer') %>
