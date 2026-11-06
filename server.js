@@ -38,7 +38,7 @@ const PORT = process.env.PORT || 3000;
 // ─────────────────────────── Data directory ───────────────────────────────
 
 const DATA_DIR = path.resolve(
-  process.env.DB_PATH ? path.dirname(process.env.DB_PATH) : './data'
+  process.env.DB_PATH ? path.dirname(process.env.DB_PATH) : (process.env.VERCEL ? '/tmp' : './data')
 );
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 

@@ -11,7 +11,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path    = require('path');
 const fs      = require('fs');
 
-const DB_PATH = process.env.DB_PATH || './data/secure_login.db';
+const DB_PATH = process.env.DB_PATH || (process.env.VERCEL ? '/tmp/secure_login.db' : './data/secure_login.db');
 
 // Ensure the data directory exists
 const dbDir = path.dirname(path.resolve(DB_PATH));

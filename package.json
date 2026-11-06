@@ -22,6 +22,9 @@
     "sqlite3": "^5.1.7",
     "ejs": "^3.1.9"
   },
+  "overrides": {
+    "tar": "^7.4.3"
+  },
   "devDependencies": {
     "nodemon": "^3.0.2"
   },
